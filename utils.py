@@ -12,7 +12,6 @@ class Data:
 
 
 def load_data(path):
-    """Read the dataset. Raises ValueError with a clear message if it's unusable."""
     mileages, prices = [], []
     try:
         with open(path, newline="") as f:
@@ -36,25 +35,28 @@ def load_data(path):
 
 
 def estimate_price(mileage, theta0, theta1):
-    """The hypothesis from the subject: estimatePrice(mileage) = theta0 + theta1 * mileage."""
     return theta0 + theta1 * mileage
 
 
 def load_thetas(path=THETAS_PATH):
-    """Return (theta0, theta1, trained). Before training, both thetas are 0."""
     try:
         with open(path) as f:
             theta0, theta1 = (float(v) for v in f.read().strip().split(","))
-    except (OSError, ValueError):
+    except ValueError:
         return 0.0, 0.0, False
+    except OSError as e:
+        raise OSError(f"cannot read {path}: {e.strerror}")
     if not (math.isfinite(theta0) and math.isfinite(theta1)):
         return 0.0, 0.0, False
     return theta0, theta1, True
 
 
 def save_thetas(theta0, theta1, path=THETAS_PATH):
-    with open(path, "w") as f:
-        f.write(f"{theta0},{theta1}\n")
+    try:
+        with open(path, "w") as f:
+            f.write(f"{theta0},{theta1}\n")
+    except OSError as e:
+        raise ValueError(f"cannot read {path}: {e.strerror}")
 
 
 def plot_line(data, theta0, theta1, color, label):

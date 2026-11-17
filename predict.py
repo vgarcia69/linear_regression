@@ -1,5 +1,5 @@
-"""Ask a mileage, print the estimated price, then show it on the graph (bonus)."""
 import math
+import sys
 
 from utils import estimate_price, load_data, load_thetas, plot_line
 
@@ -24,7 +24,7 @@ def ask_mileage():
 def main():
     theta0, theta1, trained = load_thetas()
     if not trained:
-        print("Model not trained yet (run train.py): theta0 = theta1 = 0.")
+        raise("Model not trained yet (run train.py): theta0 = theta1 = 0.")
     mileage = ask_mileage()
     price = estimate_price(mileage, theta0, theta1)
     print(f"Estimated price: {price:.2f}")
@@ -35,7 +35,6 @@ def main():
 
 
 def show_bonus(theta0, theta1, mileage, price):
-    """R2 + graph. Optional: if it fails, the prediction above is already printed."""
     try:
         import matplotlib.pyplot as plt
         from precision import r_squared
@@ -44,7 +43,7 @@ def show_bonus(theta0, theta1, mileage, price):
     except (ImportError, ValueError) as e:
         print(f"(graph skipped: {e})")
         return
-    print(f"R2 = {r_squared(data, theta0, theta1):.4f}")
+
     plt.scatter(data.mileages, data.prices, label="data")
     plot_line(data, theta0, theta1, "green", "linear regression")
     plt.scatter([mileage], [price], color="red", zorder=3, label="prediction")
@@ -58,5 +57,5 @@ def show_bonus(theta0, theta1, mileage, price):
 if __name__ == "__main__":
     try:
         main()
-    except (EOFError, KeyboardInterrupt):
-        print()
+    except (EOFError, KeyboardInterrupt, OSError) as e:
+        print(f"Error: {e}", file=sys.stderr)

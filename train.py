@@ -1,4 +1,3 @@
-"""Mandatory program 2: train theta0/theta1 by gradient descent and save them."""
 import sys
 
 from line import linear_regression
@@ -7,6 +6,7 @@ from utils import load_data, save_thetas
 
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else "data.csv"
+
     data = load_data(path)
     theta0, theta1 = linear_regression(data)
     save_thetas(theta0, theta1)
